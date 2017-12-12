@@ -1,0 +1,116 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font: caption;
+  padding: 8px;
+  background-color: #ffffff;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+
+.item + .item {
+  margin-top: 16px;
+}
+
+.item-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  flex-basis: 24px;
+}
+
+.overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-info {
+  font-size: 12px;
+  display: inline-block;
+  margin: 0 16px;
+}
+
+.item-filename {
+  margin-bottom: 4px;
+}
+
+.item-size,
+.item-hostname,
+.item-datetime {
+  opacity: 0.75;
+}
+
+.item-show {
+  display: block;
+  background: url(../icons/folder.png) center no-repeat;
+  width: 32px;
+  height: 32px;
+  flex-basis: 32px;
+  margin-left: auto;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.item-show:hover {
+  background-color: #f4f4f4;
+}
+
+.item-show:active {
+  background-color: #eeeeee;
+}
+
+.progress {
+  display: none;
+  position: relative;
+  height: 16px;
+  width: 100%;
+}
+
+.progress .loader {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  background: #000000;
+  z-index: 1;
+  transition: width 0.5s;
+  border-radius: 2px;
+}
+
+.progress .percentage {
+  color: #EEE;
+  position: relative;
+  z-index: 2;
+  font-size: 12px;
+  line-height: 16px;
+  margin-left: 4px;
+}
+
+.in_progress .progress {
+  display: block;
+}
+
+.in_progress {
+  background-color: #EEEEF4;
+}
+
+.interrupted {
+  background-color: #EEE;
+}
+
+.selected {
+  background-image: linear-gradient(to top, #d7e9fc, #e3edfd);
+  border-radius: 4px;
+  box-shadow: 0 0 1px 1px #7ca3ce;
+}

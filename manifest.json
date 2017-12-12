@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "Downloads sidebar",
+  "description": "Displays a sidebar that lets you manage your latest downloads",
+  "version": "0.1",
+  "applications": {
+    "gecko": {
+      "strict_min_version": "54.0a1"
+    }
+  },
+
+  "sidebar_action": {
+    "default_icon": "icons/downloads.png",
+    "default_title" : "Downloads",
+    "default_panel": "sidebar/panel.html"
+  },
+
+  "permissions": ["downloads", "downloads.open"],
+
+  "commands": {
+    "_execute_sidebar_action": {
+      "description": "Open the downloads sidebar",
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y"
+      }
+    }
+  }
+}

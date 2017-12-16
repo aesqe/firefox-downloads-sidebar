@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Downloads sidebar",
   "description": "Displays a sidebar that lets you manage your latest downloads",
-  "version": "0.1",
+  "version": "0.2",
   "applications": {
     "gecko": {
       "strict_min_version": "54.0a1"
@@ -10,7 +10,7 @@
   },
 
   "sidebar_action": {
-    "default_icon": "icons/downloads.png",
+    "default_icon": "icons/downloads.svg",
     "default_title" : "Downloads",
     "default_panel": "sidebar/panel.html"
   },

@@ -23,9 +23,10 @@ body {
 
 .item-icon {
   display: inline-block;
-  width: 24px;
-  height: 24px;
-  flex-basis: 24px;
+  width: 32px;
+  height: 32px;
+  flex-basis: 32px;
+  vertical-align: top;
 }
 
 .overflow-ellipsis {
@@ -36,6 +37,7 @@ body {
 
 .item-info {
   font-size: 12px;
+  width: 100%;
   display: inline-block;
   margin: 0 16px;
 }
@@ -48,17 +50,21 @@ body {
 .item-hostname,
 .item-datetime {
   opacity: 0.75;
+  font-size: 11px;
 }
 
 .item-show {
-  display: block;
-  background: url(../icons/folder.png) center no-repeat;
-  width: 32px;
-  height: 32px;
-  flex-basis: 32px;
+  display: none;
+  background: url(../icons/folder.svg) center no-repeat;
+  background-size: 16px;
+  width: 16px;
+  height: 16px;
+  flex-basis: 16px;
+  border: none;
   margin-left: auto;
   cursor: pointer;
   border-radius: 4px;
+  vertical-align: top;
 }
 
 .item-show:hover {
@@ -69,11 +75,26 @@ body {
   background-color: #eeeeee;
 }
 
-.progress {
+.state-complete .item-show {
+  display: block;
+}
+
+.item-options {
   display: none;
-  position: relative;
-  height: 16px;
   width: 100%;
+}
+
+.progress {
+  position: relative;
+  height: 8px;
+  width: 100%;
+  border: 1px solid #a0a0a0;
+  background-color: #f0f0f0;
+  border-radius: 1px;
+}
+
+.state-canceled .progress {
+  display: none;
 }
 
 .progress .loader {
@@ -82,35 +103,60 @@ body {
   top: 0;
   height: 100%;
   width: 0;
-  background: #000000;
+  background: #6d6d6d;
   z-index: 1;
-  transition: width 0.5s;
-  border-radius: 2px;
 }
 
 .progress .percentage {
   color: #EEE;
   position: relative;
   z-index: 2;
-  font-size: 12px;
+  font-size: 8px;
   line-height: 16px;
   margin-left: 4px;
 }
 
-.in_progress .progress {
+.state-in_progress .item-options,
+.state-canceled .item-options,
+.state-paused .item-options {
   display: block;
-}
-
-.in_progress {
-  background-color: #EEEEF4;
-}
-
-.interrupted {
-  background-color: #EEE;
 }
 
 .selected {
   background-image: linear-gradient(to top, #d7e9fc, #e3edfd);
   border-radius: 4px;
   box-shadow: 0 0 1px 1px #7ca3ce;
+}
+
+
+
+
+.change-state-button,
+.cancel-button {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+  background-size: 12px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url(../icons/retry.svg);
+}
+
+.state-in_progress .change-state-button {
+  background-image: url(../icons/pause.svg);
+}
+
+.state-paused .change-state-button {
+  background-image: url(../icons/play.svg);
+}
+
+.cancel-button {
+  background-image: url(../icons/cancel.svg);
+}
+
+button + button {
+  margin-left: 8px;
 }

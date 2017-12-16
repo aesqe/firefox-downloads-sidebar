@@ -1,0 +1,54 @@
+<div
+  id="item-{{id}}"
+  title="Double-click to open the file directly"
+  on-click="selectItem"
+  on-dblclick="openItem"
+  class="item state-{{downloadState}}"
+  class-selected="selected"
+>
+  <img class="item-icon" src="{{iconUrl}}" />
+
+  <div class="item-info overflow-ellipsis">
+
+    <div class="item-filename overflow-ellipsis" title="{{filePath}}">
+      {{fileName}}
+    </div>
+
+    <div class="overflow-ellipsis">
+      <span class="item-size">{{size}}</span> &mdash;
+      <span class="item-hostname" title="{{url}}">{{hostname}}</span>
+    </div>
+
+    <span class="item-datetime">{{dateTime}}</span>
+
+    <div class="item-options">
+      <div class="progress">
+        <span class="loader"style="width: {{percentage}}%"></span>
+        <span class="percentage">{{percentage}}%</span>
+      </div>
+
+      <div class="download-options">
+        <button
+          class="change-state-button"
+          on-click="changeDownloadState"
+          title="{{stateButtonText}}"
+        >
+        </button>
+        <button
+          class="cancel-button"
+          on-click="cancelDownload"
+          title="{{cancelButtonText}}"
+        >
+        </button>
+      </div>
+      
+    </div>
+  </div>
+
+  <button
+    class="item-show"
+    title="Show file in folder: {{filePath}}"
+    on-click="showItem"
+  >
+  </button>
+</div>

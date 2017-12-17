@@ -9,6 +9,10 @@ Open your Firefox sidebar and choose "Downloads" from the top drop-down list.
 Be warned: this was made in two afternoons and as such it is nowhere near complete.
 I do intend to work further on it.
 
+Screenshot:
+
+![](screenshot.png)
+
 Credits:
 
 * uses Ractive (https://github.com/ractivejs/ractive)

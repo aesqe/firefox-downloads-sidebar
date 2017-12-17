@@ -119,7 +119,23 @@ function start() {
       return this.search({id: itemId});
     },
 
+    getNumber(num) {
+      const trynum = Number(num);
+
+      if (isNaN(trynum)) {
+        return 0;
+      }
+
+      if (trynum < 0) {
+        return 0;
+      }
+
+      return trynum;
+    },
+
     getFileSizeString(size) {
+      size = this.getNumber(size);
+
       const measure = [
         "bytes", "KB", "MB", "GB", "TB",
         "PB", "EB", "ZB", "YB"
@@ -316,7 +332,14 @@ function start() {
 
       if (item.bytesReceived > 0) {
         size = this.getFileSizeString(item.bytesReceived);
-        percentage = (ratio * 100).toFixed(1)
+        percentage = (ratio * 100).toFixed(1);
+
+        const totalBytes = this.getNumber(item.totalBytes);
+        const totalSize = this.getFileSizeString(item.totalBytes);
+
+        if (downloadInProgress && totalBytes) {
+          size = `${size} of ${totalSize}`;
+        }
       }
 
       this.set(`${keypath}.downloadInProgress`, downloadInProgress);

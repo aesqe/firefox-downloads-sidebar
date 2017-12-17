@@ -103,17 +103,12 @@ body {
   top: 0;
   height: 100%;
   width: 0;
-  background: #6d6d6d;
+  background-color: #3c9af8;
   z-index: 1;
 }
 
-.progress .percentage {
-  color: #EEE;
-  position: relative;
-  z-index: 2;
-  font-size: 8px;
-  line-height: 16px;
-  margin-left: 4px;
+.state-paused .progress .loader {
+  background-color: #6d6d6d;
 }
 
 .state-in_progress .item-options,
@@ -127,9 +122,6 @@ body {
   border-radius: 4px;
   box-shadow: 0 0 1px 1px #7ca3ce;
 }
-
-
-
 
 .change-state-button,
 .cancel-button {

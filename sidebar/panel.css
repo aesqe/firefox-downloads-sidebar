@@ -3,18 +3,62 @@ html, body {
   width: 100%;
   margin: 0;
   box-sizing: border-box;
+  background-color: #FFFFFF;
 }
 
 body {
   font: caption;
-  padding: 8px;
-  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+#content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 3px;
+}
+
+.toolbar-bottom {
+  margin: auto 0 0;
+  padding: 8px 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #eee;
+  background: transparent;
+}
+
+.toolbar-bottom button {
+  background: transparent;
+  border: 1px transparent;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.toolbar-bottom button:hover {
+  background-color: #d7e5f1;
+  border-color: #c0dcf3;
+}
+
+.item-link-input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.items {
+  flex: 1;
 }
 
 .item {
   display: flex;
   align-items: center;
   padding: 4px;
+  position: relative;
 }
 
 .item + .item {
@@ -24,9 +68,10 @@ body {
 .item-icon {
   display: inline-block;
   width: 32px;
-  height: 32px;
+  height: auto;
   flex-basis: 32px;
   vertical-align: top;
+  margin-left: 4px;
 }
 
 .overflow-ellipsis {
@@ -53,10 +98,16 @@ body {
   font-size: 11px;
 }
 
-.item-show {
-  display: none;
-  background: url(../icons/folder.svg) center no-repeat;
-  background-size: 16px;
+.toolbar-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 16px;
+}
+
+.toolbar-item .btn {
+  background-repeat: no-repeat;
+  background-color: transparent;
   width: 16px;
   height: 16px;
   flex-basis: 16px;
@@ -65,18 +116,39 @@ body {
   cursor: pointer;
   border-radius: 4px;
   vertical-align: top;
+  text-indent: -500px;
+  overflow: hidden;
+  display: inline-block;
 }
 
-.item-show:hover {
+.toolbar-item .btn + .btn {
+  margin-top: 4px;
+}
+
+.toolbar-item .btn:hover {
   background-color: #f4f4f4;
 }
 
-.item-show:active {
+.toolbar-item .btn:active {
   background-color: #eeeeee;
 }
 
-.state-complete .item-show {
-  display: block;
+.toolbar-item .btn.item-show {
+  background-image: url(../icons/folder.svg);
+  background-position: center;
+  background-size: 18px;
+}
+
+.item-copy-link {
+  background-image: url(../icons/copy.svg);
+  background-size: 14px;
+  background-position: right center;
+}
+
+.item-download-page {
+  background-image: url(../icons/external-link.svg);
+  background-position: 1px center;
+  background-size: 16px;
 }
 
 .item-options {
@@ -93,7 +165,8 @@ body {
   border-radius: 1px;
 }
 
-.state-canceled .progress {
+.state-canceled .progress,
+.state-canceled .cancel-button {
   display: none;
 }
 
@@ -124,12 +197,16 @@ body {
 }
 
 .change-state-button,
-.cancel-button {
+.cancel-button,
+.erase-button {
   width: 16px;
   height: 16px;
   padding: 0;
   border: none;
   cursor: pointer;
+  display: inline-block;
+  text-indent: -200px;
+  overflow: hidden;
   background-color: transparent;
   background-size: 12px;
   background-repeat: no-repeat;
@@ -145,10 +222,22 @@ body {
   background-image: url(../icons/play.svg);
 }
 
-.cancel-button {
+.cancel-button,
+.erase-button {
   background-image: url(../icons/cancel.svg);
 }
 
-button + button {
+.erase-button {
+  display: none;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+.item:hover .erase-button {
+  display: inline-block;
+}
+
+.cancel-button {
   margin-left: 8px;
 }

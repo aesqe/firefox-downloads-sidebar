@@ -9,6 +9,12 @@
   <img class="item-icon" src="{{iconUrl}}" />
 
   <div class="item-info overflow-ellipsis">
+    <button
+      class="erase-button"
+      on-click="eraseDownload"
+      title="Erase from history"
+    >
+    </button>
 
     <div class="item-filename overflow-ellipsis" title="{{filePath}}">
       {{fileName}}
@@ -17,6 +23,7 @@
     <div class="overflow-ellipsis">
       <span class="item-size">{{size}}</span> &mdash;
       <span class="item-hostname" title="{{url}}">{{hostname}}</span>
+      <input id="link-{{id}}" class="item-link-input" value="{{url}}" />
     </div>
 
     <span class="item-datetime">{{dateTime}}</span>
@@ -36,7 +43,7 @@
         <button
           class="cancel-button"
           on-click="cancelDownload"
-          title="{{cancelButtonText}}"
+          title="Cancel"
         >
         </button>
       </div>
@@ -44,10 +51,30 @@
     </div>
   </div>
 
-  <button
-    class="item-show"
-    title="Show file in folder: {{filePath}}"
-    on-click="showItem"
-  >
-  </button>
+  <div class="toolbar-item">
+    <button
+      class="btn item-copy-link"
+      title="Copy download link"
+      on-click="copyLinkToClipboard"
+    >
+      Copy download link
+    </button>
+
+    <a
+      class="btn item-download-page"
+      title="Go To Download Page"
+      href="{{referrer}}"
+      target="_blank"
+    >
+      Go To Download Page
+    </a>
+
+    <button
+      class="btn item-show"
+      title="Open containing folder: {{filePath}}"
+      on-click="showItem"
+    >
+      Open containing folder
+    </button>
+  </div>
 </div>

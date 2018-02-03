@@ -1,8 +1,10 @@
 {{#if items.length}}
-	<div class="items">
-		{{#items:i}} {{> item}} {{/items}}
-	</div>
-	<div class="toolbar-bottom">
-		<button on-click="clearAllDownloads">Clear Downloads</button>
-	</div>
+  <div class="items">
+    {{#items:i}} {{> item}} {{/items}}
+  </div>
+  <div class="toolbar-bottom">
+    <button on-click="clearDownloads">
+      Clear Complete Downloads
+    </button>
+  </div>
 {{/if}}

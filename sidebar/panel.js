@@ -2,7 +2,44 @@ Ractive.DEBUG = false;
 Ractive.defaults.allowExpressions = false;
 
 let app;
+
 const DOWNLOAD_PROGRESS_INTERVAL = 500;
+const ACTIVE_DOWNLOADS = "activeDownloads";
+const PAUSED = "paused";
+const FAILED = "failed";
+const CANCELED = "canceled";
+const ITEMS = "items";
+
+const downloadStates = {
+  ...browser.downloads.State,
+  PAUSED,
+  FAILED,
+  CANCELED,
+};
+
+const measures = [
+  "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
+];
+
+const autobindMethods = [
+  "addItem",
+  "checkActiveDownloads",
+  "clearDownloads",
+  "copyLinkToClipboard",
+  "determineDownloadActivity",
+  "eraseDownload",
+  "eraseItem",
+  "getDownloadById",
+  "getItemById",
+  "onChanged",
+  "onErased",
+  "onError",
+  "prepareItem",
+  "prepareItems",
+  "setFileIcon",
+  "updateActiveDownloads",
+  "updateDownloadItem",
+];
 
 fetchFileContentsAsText("template-item.html")
   .then((text) => Ractive.partials.item = text)
@@ -13,7 +50,7 @@ fetchFileContentsAsText("template-item.html")
 function start() {
   app = new Ractive({
     target: "#content",
-    states: browser.downloads.State,
+    states: downloadStates,
     interrupts: browser.downloads.InterruptReason,
     template: Ractive.partials.main,
 
@@ -25,35 +62,23 @@ function start() {
     },
 
     onconfig() {
-      this.prepareItems = this.prepareItems.bind(this);
-      this.prepareItem = this.prepareItem.bind(this);
-      this.setFileIcon = this.setFileIcon.bind(this);
-      this.addItem = this.addItem.bind(this);
-      this.getItemById = this.getItemById.bind(this);
-      this.getDownloadById = this.getDownloadById.bind(this);
-      this.updateDownloadItem = this.updateDownloadItem.bind(this);
-      this.onChanged = this.onChanged.bind(this);
-      this.onErased = this.onErased.bind(this);
-      this.clearAllDownloads = this.clearAllDownloads.bind(this);
-      this.copyLinkToClipboard = this.copyLinkToClipboard.bind(this);
-      this.eraseDownload = this.eraseDownload.bind(this);
-      this.determineDownloadActivity = this.determineDownloadActivity.bind(this);
-      this.updateActiveDownloads = this.updateActiveDownloads.bind(this);
-      this.checkActiveDownloads = this.checkActiveDownloads.bind(this);
+      autobindMethods.forEach(
+        (name) => this[name] = this[name].bind(this)
+      );
 
       browser.downloads.onCreated.addListener(this.addItem);
       browser.downloads.onChanged.addListener(this.onChanged);
       browser.downloads.onErased.addListener(this.onErased);
 
       this.on({
-        selectItem: this.selectItem,
         openItem: this.openItem,
         showItem: this.showItem,
-        changeDownloadState: this.changeDownloadState,
-        cancelDownload: this.cancelDownload,
-        clearAllDownloads: this.clearAllDownloads,
-        copyLinkToClipboard: this.copyLinkToClipboard,
+        selectItem: this.selectItem,
         eraseDownload: this.eraseDownload,
+        cancelDownload: this.cancelDownload,
+        clearDownloads: this.clearDownloads,
+        changeDownloadState: this.changeDownloadState,
+        copyLinkToClipboard: this.copyLinkToClipboard,
       });
 
       this.updateItems();
@@ -63,7 +88,7 @@ function start() {
       this.getLatestDownloads()
         .then(this.prepareItems)
         .then((items) => {
-          this.set("items", items);
+          this.set(ITEMS, items);
 
           items.forEach(this.setFileIcon);
           items.forEach(this.determineDownloadActivity);
@@ -74,7 +99,7 @@ function start() {
     determineDownloadActivity(item) {
       const downloadState = this.calculateDownloadState(item);
 
-      if (downloadState === "in_progress") {
+      if (downloadState === this.states.IN_PROGRESS) {
         this.addToActiveDownloads(item.id);
       } else {
         this.removeFromActiveDownloads(item.id);
@@ -82,34 +107,33 @@ function start() {
     },
 
     addToActiveDownloads(itemId) {
-      const activeDownloads = this.get("activeDownloads");
+      const activeDownloads = this.get(ACTIVE_DOWNLOADS);
 
       if (activeDownloads.indexOf(itemId) === -1) {
-        this.getDownloadById(itemId).then(
-          (item) => {
-            if (item) {
-              this.push("activeDownloads", itemId);
-              this.checkActiveDownloads();
-            }
-          },
-          this.onError
-        );
+        this.getDownloadById(itemId)
+          .then((item) => {
+              if (item) {
+                this.push(ACTIVE_DOWNLOADS, itemId);
+                this.checkActiveDownloads();
+              }
+            },
+            this.onError
+          );
       }      
     },
 
     removeFromActiveDownloads(itemId) {
-      const activeDownloads = this.get("activeDownloads");
+      const activeDownloads = this.get(ACTIVE_DOWNLOADS);
       const index = activeDownloads.indexOf(itemId);
 
       if (index > -1) {
-        this.splice("activeDownloads", index, 1).then(() => {
-          this.updateDownloadItem(itemId);
-        });
+        this.splice(ACTIVE_DOWNLOADS, index, 1)
+          .then(() => this.updateDownloadItem(itemId));
       }
     },
 
     checkActiveDownloads() {
-      const activeDownloads = this.get("activeDownloads");
+      const activeDownloads = this.get(ACTIVE_DOWNLOADS);
       let timeoutId = this.get("downloadsCheckerTimeoutId");
 
       clearTimeout(timeoutId);
@@ -129,7 +153,7 @@ function start() {
     },
 
     updateActiveDownloads() {
-      const activeDownloads = this.get("activeDownloads");
+      const activeDownloads = this.get(ACTIVE_DOWNLOADS);
 
       Promise.all(
         activeDownloads.map(this.getDownloadById)
@@ -151,7 +175,8 @@ function start() {
       const stateButtonText = this.getStateButtonText(item.state);
       const percentage = item.bytesReceived / item.totalBytes;
 
-      return Object.assign({}, item, {
+      return {
+        ...item,
         size,
         filePath,
         fileName,
@@ -159,7 +184,7 @@ function start() {
         dateTime,
         stateButtonText,
         percentage,
-      });
+      };
     },
 
     prepareItems(items) {
@@ -179,12 +204,12 @@ function start() {
     },
 
     getItemById(itemId) {
-      const items = this.get("items");
+      const items = this.get(ITEMS);
       return items.find((item) => item.id === itemId);
     },
 
     getItemIndexById(itemId) {
-      const items = this.get("items");
+      const items = this.get(ITEMS);
       return items.findIndex((item) => item.id === itemId);
     },
 
@@ -220,13 +245,9 @@ function start() {
     },
 
     getFileSizeString(size) {
-      size = this.getNumber(size);
-
-      const measure = [
-        "bytes", "KB", "MB", "GB", "TB",
-        "PB", "EB", "ZB", "YB"
-      ];
       let counter = 0;
+
+      size = this.getNumber(size);
 
       while (size >= 1024) {
         size /= 1024;
@@ -235,7 +256,7 @@ function start() {
 
       size = size.toFixed(1);
 
-      return `${size} ${measure[counter]}`;
+      return `${size} ${measures[counter]}`;
     },
 
     getFilename(path) {
@@ -243,7 +264,7 @@ function start() {
     },
 
     deselectAllItems() {
-      const items = this.get("items");
+      const items = this.get(ITEMS);
 
       items.forEach((item) => {
         const itemIndex = this.getItemIndexById(item.id);
@@ -274,12 +295,13 @@ function start() {
     },
 
     changeDownloadState(event) {
+      const { PAUSED, IN_PROGRESS } = this.states;
       const item = event.get();
 
       switch (item.downloadState) {
-        case "in_progress":
+        case IN_PROGRESS:
           return this.pauseDownload(item.id);
-        case "paused":
+        case PAUSED:
           return this.resumeDownload(item.id);
         default:
           return this.retryDownload(item);
@@ -298,10 +320,7 @@ function start() {
       this.addToActiveDownloads(itemId);
 
       browser.downloads.resume(itemId)
-        .then(
-          null,
-          this.onError
-        );
+        .then(null, this.onError);
     },
 
     retryDownload(item) {
@@ -343,18 +362,15 @@ function start() {
     eraseItem(itemId, callback = null) {
       this.removeFromActiveDownloads(itemId);
 
-      browser.downloads.erase({id: itemId})
-        .then(
-          callback,
-          this.onError
-        );
+      browser.downloads.erase({ id: itemId })
+        .then(callback, this.onError);
     },
 
     addItem(data) {
       const item = this.prepareItem(data);
       const fileName = this.getFilename(item.filename);
 
-      this.unshift('items', item);
+      this.unshift(ITEMS, item);
 
       this.setFileIcon(item);
       this.addToActiveDownloads(item.id);
@@ -366,7 +382,7 @@ function start() {
 
     onErased(itemId) {
       const itemIndex = this.getItemIndexById(itemId);
-      this.splice("items", itemIndex, 1);
+      this.splice(ITEMS, itemIndex, 1);
     },
 
     onError(error) {
@@ -374,38 +390,48 @@ function start() {
     },
 
     calculateDownloadState(item) {
-      const complete = (item.state === this.states.COMPLETE);
-      const in_progress = (item.state === this.states.IN_PROGRESS);
-      const canceled = (item.error === this.interrupts.USER_CANCELED);
-      const resumable = item.paused && item.canResume;
+      const {
+        PAUSED,
+        FAILED,
+        CANCELED,
+        COMPLETE,
+        IN_PROGRESS,
+      } = this.states;
+
       const errored = !!this.interrupts[item.error];
+      const resumable = item.paused && item.canResume;
+      const canceled = (item.error === this.interrupts.USER_CANCELED);
+      const in_progress = (item.state === IN_PROGRESS);
+      const complete = (item.state === COMPLETE);
 
       if (errored) {
         if (canceled) {
           if (resumable) {
-            return "paused";
+            return PAUSED;
           }
 
-          return "canceled";
+          return CANCELED;
         }
 
-        return "failed";
+        return FAILED;
       }
 
       if (complete) {
-        return "complete";
+        return COMPLETE;
       }
       
-      return "in_progress";
+      return this.states.IN_PROGRESS;
     },
 
     getStateButtonText(state) {
       switch (state) {
-        case "paused":
+        case PAUSED:
           return "Resume";
+
         case "canceled":
         case "failed":
           return "Retry?";
+
         default:
           return "Pause";
       }
@@ -417,25 +443,27 @@ function start() {
       }
 
       if (typeof item === "number") {
-        return this.getDownloadById(item).then(this.updateDownloadItem);
+        return this.getDownloadById(item)
+          .then(this.updateDownloadItem);
       }
+
+      const { IN_PROGRESS } = this.states;
 
       const itemIndex = this.getItemIndexById(item.id);
       const keypath = `items.${itemIndex}`;
-      const oldItem = this.get(keypath) || {};
+      const oldItem = (this.get(keypath) || {});
 
       const downloadState = this.calculateDownloadState(item);
       const stateButtonText = this.getStateButtonText(downloadState);
-      const ratio = item.bytesReceived / item.totalBytes;
+      const ratio = (item.bytesReceived / item.totalBytes);
       const downloadInProgress = (
-        downloadState === "paused" || downloadState === "in_progress"
+        downloadState === PAUSED || downloadState === IN_PROGRESS
       );
 
       let size = oldItem.size;
       let percentage = oldItem.percentage;
 
-      if (item.bytesReceived > 0)
-      {
+      if (item.bytesReceived > 0) {
         size = this.getFileSizeString(item.bytesReceived);
         percentage = (ratio * 100).toFixed(1);
 
@@ -453,22 +481,37 @@ function start() {
       this.set(`${keypath}.percentage`, percentage);
       this.set(`${keypath}.size`, size);
 
-      if (downloadState !== "in_progress") {
+      if (downloadState !== IN_PROGRESS) {
         this.removeFromActiveDownloads(item.id);
       }
 
       return downloadState;
     },
 
-    clearAllDownloads() {
-      return browser.downloads.erase({})
-        .then(null, this.onError);
+    getInactiveItems() {
+      const { IN_PROGRESS, PAUSED } = this.states;
+      const items = this.get(ITEMS);
+
+      return items.filter(function (item) {
+        const state = item.downloadState;
+        return (state !== IN_PROGRESS) && (state !== PAUSED);
+      });
+    },
+
+    clearDownloads() {
+      const eraseInactiveItems = this.getInactiveItems()
+        .map(item => item.id)
+        .map(this.eraseItem);
+
+      return Promise.all(eraseInactiveItems);
     },
 
     copyLinkToClipboard(event) {
       const itemId = event.get("id");
       const input = this.find(`#link-${itemId}`);
+
       input.select();
+
       document.execCommand("copy");
     },
   });

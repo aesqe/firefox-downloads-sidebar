@@ -12,7 +12,7 @@ Keyboard shortcut is **F4**.
 
 There is also a browser toolbar button which opens the Downloads sidebar.
 
-Features:
+### Features
 
 * pause, resume, cancel, retry, erase download
 * copy download link
@@ -20,11 +20,11 @@ Features:
 * show downloaded item in folder
 * erase all recent downloads that are not active (active = downloading or paused)
 
-Screenshot:
+### Screenshot
 
 ![](screenshot.png)
 
-Credits:
+### Credits
 
 * uses Ractive.js (https://github.com/ractivejs/ractive)
 * folder, play and pause icons by ionicons (http://ionicons.com)

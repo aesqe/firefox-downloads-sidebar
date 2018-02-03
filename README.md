@@ -1,8 +1,8 @@
 # Downloads sidebar web extension
 
-This extension will displays a list of your latest downloads in a sidebar.
+This extension will display a list of your latest downloads in the Firefox sidebar.
 
-The latest version is **0.4**
+The latest version is **0.5**
 
 ## How do I use this?
 
@@ -18,7 +18,7 @@ Features:
 * copy download link
 * open download page link
 * show downloaded item in folder
-* erase all recent downloads
+* erase all recent downloads that are not active (active = downloading or paused)
 
 Screenshot:
 

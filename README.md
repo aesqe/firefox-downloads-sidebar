@@ -2,7 +2,7 @@
 
 This extension will display a list of your latest downloads in the Firefox sidebar.
 
-The latest version is **0.5**
+The latest version is **0.5.1**
 
 ## How do I use this?
 

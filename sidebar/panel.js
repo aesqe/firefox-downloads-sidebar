@@ -79,6 +79,7 @@ function start() {
         clearDownloads: this.clearDownloads,
         changeDownloadState: this.changeDownloadState,
         copyLinkToClipboard: this.copyLinkToClipboard,
+        setToOpenItem: this.setToOpenItem
       });
 
       this.updateItems();
@@ -233,11 +234,7 @@ function start() {
     getNumber(num) {
       const trynum = Number(num);
 
-      if (isNaN(trynum)) {
-        return 0;
-      }
-
-      if (trynum < 0) {
+      if (isNaN(trynum) || trynum < 0) {
         return 0;
       }
 
@@ -285,6 +282,11 @@ function start() {
     },
 
     openItem(event) {
+      const item = event.get();
+      browser.downloads.open(item.id);
+    },
+
+    setToOpenItem(event){
       const item = event.get();
       browser.downloads.open(item.id);
     },

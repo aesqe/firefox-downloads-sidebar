@@ -6,7 +6,11 @@
   class="item state-{{downloadState}}"
   class-selected="selected"
 >
-  <img class="item-icon" src="{{iconUrl}}" />
+  <div class="item-icon-execute"
+  title="Click to open when possible">
+    <img class="item-icon" on-click="setToOpenItem" src="{{iconUrl}}" />
+  </div>
+  
 
   <div class="item-info overflow-ellipsis">
     <button

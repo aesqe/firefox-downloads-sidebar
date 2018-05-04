@@ -31,15 +31,20 @@ body {
 }
 
 .toolbar-bottom button {
-  background: transparent;
+  background-color: rgba(12, 12, 13, 0.1);
+  border-radius: 3px;
   border: 1px transparent;
   padding: 4px 8px;
   cursor: pointer;
 }
 
 .toolbar-bottom button:hover {
-  background-color: #d8d8d8;
+  background-color: rgba(12, 12, 13, 0.2);
   border-color: #adafb1;
+}
+
+.toolbar-bottom button:active {
+  background-color: rgba(12, 12, 13, 0.3);
 }
 
 .item-link-input {
@@ -68,42 +73,20 @@ body {
   margin-top: 3px;
 }
 
-.item-icon-execute{
+.item-icon {
   display: inline-block;
   width: 32px;
   height: auto;
   flex-basis: 32px;
   vertical-align: top;
   margin-left: 4px;
+  /*pointer-events: none;*/
 }
 
-.item-icon {
-  padding-left: 4px;
-  display: block;
-  transition: 0.5s ease;
-  cursor: pointer;
+.grayscale {
+  filter: grayscale(1);
 }
 
-.item-icon:hover{
-  opacity: 0.7;
-}
-
-.item-icon:active{
-  animation: run 2s;
-}
-
-.item-icon:hover:active{
-  animation: run 2s;
-}
-
-@-webkit-keyframes run {
-  0% {opacity: .3;}
-  100% {opacity: 0.7;}
-}
-@keyframes run {
-  0% {opacity: .3;}
-  100% {opacity: 0.7;}
-}
 
 .overflow-ellipsis {
   overflow: hidden;

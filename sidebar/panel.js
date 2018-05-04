@@ -79,7 +79,6 @@ function start() {
         clearDownloads: this.clearDownloads,
         changeDownloadState: this.changeDownloadState,
         copyLinkToClipboard: this.copyLinkToClipboard,
-        setToOpenItem: this.setToOpenItem
       });
 
       this.updateItems();
@@ -120,7 +119,7 @@ function start() {
             },
             this.onError
           );
-      }      
+      }
     },
 
     removeFromActiveDownloads(itemId) {
@@ -283,12 +282,7 @@ function start() {
 
     openItem(event) {
       const item = event.get();
-      browser.downloads.open(item.id);
-    },
-
-    setToOpenItem(event){
-      const item = event.get();
-      browser.downloads.open(item.id);
+      browser.downloads.open(item.id);      
     },
 
     showItem(event) {

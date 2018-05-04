@@ -5,13 +5,9 @@
   on-dblclick="openItem"
   class="item state-{{downloadState}}"
   class-selected="selected"
->
-  <div class="item-icon-execute"
-  title="Click to open when possible">
-    <img class="item-icon" on-click="setToOpenItem" src="{{iconUrl}}" />
-  </div>
+  >
+  <img id="icon" class="item-icon" title="Click to open when possible" draggable="false" src="{{iconUrl}}" />
   
-
   <div class="item-info overflow-ellipsis">
     <button
       class="erase-button"
@@ -64,14 +60,14 @@
       Copy download link
     </button>
 
-    <a
+    <button
       class="btn item-download-page"
       title="Go To Download Page"
       href="{{referrer}}"
       target="_blank"
     >
       Go To Download Page
-    </a>
+    </button>
 
     <button
       class="btn item-show"

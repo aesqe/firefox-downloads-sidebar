@@ -347,6 +347,9 @@ function start() {
           () => this.removeFromActiveDownloads(item.id),
           this.onError
         );
+
+        //doesn't actually add it to active downloads, but it fixes the cancel while paused bug
+        this.addToActiveDownloads(item.id);
     },
 
     eraseDownload(event) {

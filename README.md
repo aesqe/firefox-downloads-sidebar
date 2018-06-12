@@ -27,13 +27,8 @@ There is also a browser toolbar button which opens the Downloads sidebar.
 ### Credits
 
 * uses Ractive.js (https://github.com/ractivejs/ractive)
-* play and pause icons by ionicons (http://ionicons.com)
-* folder icon by Smashicons on flaticon (https://www.flaticon.com/authors/smashicons)
 * downloads icon by Pixel perfect on flaticon (https://www.flaticon.com/authors/pixel-perfect)
-* retry icon by Artyom Khamitov (https://www.iconfinder.com/Kh.Artyom)
-* cancel icon by Egor Rumyantsev on flaticon (https://www.flaticon.com/authors/egor-rumyantsev)
-* external link icon by Cole Bemis (https://www.iconfinder.com/colebemis)
-* copy icon by Google (http://google.com/design/)
+* cancel, copy, open external, folder, pause, play and retry icon from firefox (https://design.firefox.com/icons/viewer/)
 
 ### Requested features
 

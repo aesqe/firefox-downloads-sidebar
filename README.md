@@ -28,6 +28,7 @@ There is also a browser toolbar button which opens the Downloads sidebar.
 
 * uses Ractive.js (https://github.com/ractivejs/ractive)
 * downloads icon by Pixel perfect on flaticon (https://www.flaticon.com/authors/pixel-perfect)
+* play and pause icons by ionicons (http://ionicons.com)
 * cancel, copy, open external, folder, pause, play and retry icon from firefox (https://design.firefox.com/icons/viewer/)
 
 ### Requested features

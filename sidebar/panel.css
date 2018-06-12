@@ -215,8 +215,8 @@ body {
 .change-state-button,
 .cancel-button,
 .erase-button {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   padding: 0;
   border: none;
   cursor: pointer;
@@ -244,6 +244,7 @@ body {
 
 .state-in_progress .change-state-button {
   background-image: url(../icons/pause.svg);
+  background-size: 14px;
 }
 
 .state-paused .change-state-button {
@@ -256,7 +257,7 @@ body {
 }
 
 .erase-button {
-  background-size: 10px;
+  background-size: 14px;
   display: none;
   position: absolute;
   left: 4px;
@@ -268,6 +269,6 @@ body {
 }
 
 .cancel-button {
-  background-size: 10px;
+  background-size: 16px;
   margin-left: 8px;
 }

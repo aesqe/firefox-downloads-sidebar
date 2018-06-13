@@ -32,9 +32,11 @@ body {
 
 .toolbar-bottom button {
   background-color: rgba(12, 12, 13, 0.1);
-  border-radius: 3px;
-  border: 1px transparent;
-  padding: 4px 8px;
+  height: 32px;
+  color: #0c0c0d;
+  border-radius: 2px;
+  border: none;
+  padding: 0 8px;
   cursor: pointer;
 }
 
@@ -45,6 +47,10 @@ body {
 
 .toolbar-bottom button:active {
   background-color: rgba(12, 12, 13, 0.3);
+}
+
+.toolbar-bottom button:focus {
+  box-shadow: 0 0 0 1px #0a84ff inset, 0 0 0 1px #0a84ff, 0 0 0 4px rgba(10, 132, 255, 0.3);
 }
 
 .item-link-input {
@@ -120,10 +126,12 @@ body {
 }
 
 .toolbar-item .btn {
+  background-position: center;
   background-repeat: no-repeat;
   background-color: transparent;
   width: 16px;
   height: 16px;
+  padding: 0 2px;
   flex-basis: 16px;
   border: none;
   margin-left: auto;
@@ -140,11 +148,15 @@ body {
 }
 
 .toolbar-item .btn:hover {
-  background-color: #d8d8d8;
+  background-color: rgba(12, 12, 13, 0.1);
+}
+
+.disabled {
+  opacity: 0.4;
 }
 
 .toolbar-item .btn:active {
-  background-color: #b1b1b1;
+  background-color: rgba(12, 12, 13, 0.2);
 }
 
 .toolbar-item .btn.item-show {
@@ -162,7 +174,7 @@ body {
 .item-download-page {
   background-image: url(../icons/external-link.svg);
   background-position: 1px center;
-  background-size: 16px;
+  background-size: 15px;
 }
 
 .item-options {
@@ -207,7 +219,7 @@ body {
 }
 
 .selected {
-  background-color: #d6eaff;
+  /*background-color: #d6eaff;*/
   /*border-radius: 4px;
   box-shadow: 0 0 1px 1px #7ca3ce;*/
 }
@@ -217,14 +229,15 @@ body {
 .erase-button {
   width: 18px;
   height: 18px;
-  padding: 0;
+  padding: 0 4px;
+  border-radius: 1px;
   border: none;
   cursor: pointer;
   display: inline-block;
   text-indent: -200px;
   overflow: hidden;
   background-color: transparent;
-  background-size: 12px;
+  background-size: 13px;
   background-repeat: no-repeat;
   background-position: center;
   background-image: url(../icons/retry.svg);
@@ -233,21 +246,30 @@ body {
 .change-state-button:hover,
 .cancel-button:hover,
 .erase-button:hover {
-  background-color: #cacaca;
+  background-color: rgba(12, 12, 13, 0.1);
 }
 
 .change-state-button:active,
 .cancel-button:active,
 .erase-button:active {
-  background-color: #a3a3a3;
+  background-color: rgba(12, 12, 13, 0.2);
 }
+/*
+Doesn't look great
+.change-state-button:focus,
+.cancel-button:focus,
+.erase-button:focus {
+  box-shadow: 0 0 0 1px #0a84ff inset, 0 0 0 1px #0a84ff, 0 0 0 1px rgba(10, 132, 255, 0.3);
+}*/
+
 
 .state-in_progress .change-state-button {
+  background-size: 15px;
   background-image: url(../icons/pause.svg);
-  background-size: 14px;
 }
 
 .state-paused .change-state-button {
+  background-size: 15px;
   background-image: url(../icons/play.svg);
 }
 

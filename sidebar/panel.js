@@ -350,6 +350,7 @@ function start() {
 
         //doesn't actually add it to active downloads, but it fixes the cancel while paused bug
         this.addToActiveDownloads(item.id);
+        this.updateDownloadItem(item);
     },
 
     eraseDownload(event) {

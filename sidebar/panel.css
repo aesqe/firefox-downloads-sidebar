@@ -86,7 +86,13 @@ body {
   flex-basis: 32px;
   vertical-align: top;
   margin-left: 4px;
+  cursor: pointer;
+  transition: 0.5s ease;
   /*pointer-events: none;*/
+}
+
+.item-icon:hover{
+  opacity: 0.6;
 }
 
 .grayscale {
@@ -113,9 +119,15 @@ body {
 
 .item-size,
 .item-hostname,
-.item-datetime {
+.item-datetime,
+.item-speed {
   opacity: 0.75;
   font-size: 11px;
+}
+
+.item-datetime,
+.item-speed {
+  display: block;
 }
 
 .toolbar-item {
@@ -132,6 +144,7 @@ body {
   width: 16px;
   height: 16px;
   padding: 0 2px;
+  margin: 0px 0px 1px 0px;
   flex-basis: 16px;
   border: none;
   margin-left: auto;
@@ -151,10 +164,6 @@ body {
   background-color: rgba(12, 12, 13, 0.1);
 }
 
-.disabled {
-  opacity: 0.4;
-}
-
 .toolbar-item .btn:active {
   background-color: rgba(12, 12, 13, 0.2);
 }
@@ -163,6 +172,23 @@ body {
   background-image: url(../icons/folder.svg);
   background-position: center;
   background-size: 15px;
+}
+
+.folderEnabled {
+  opacity: 1;
+}
+
+.folderDisabled {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+}
+
+.folderDisabled:hover {
+  background-color: transparent !important;
+}
+
+.folderDisabled:active {
+  background-color: transparent !important;
 }
 
 .item-copy-link {
@@ -216,12 +242,6 @@ body {
 .state-canceled .item-options,
 .state-paused .item-options {
   display: block;
-}
-
-.selected {
-  /*background-color: #d6eaff;*/
-  /*border-radius: 4px;
-  box-shadow: 0 0 1px 1px #7ca3ce;*/
 }
 
 .change-state-button,

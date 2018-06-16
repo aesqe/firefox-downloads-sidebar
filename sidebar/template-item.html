@@ -1,12 +1,10 @@
 <div
   id="item-{{id}}"
-  title="Double-click to open the file directly"
-  on-click="selectItem"
-  on-dblclick="openItem"
+  title="Click the icon to open the file directly"
   class="item state-{{downloadState}}"
   class-selected="selected"
   >
-  <img id="icon" class="item-icon" draggable="false" src="{{iconUrl}}" />
+  <img id="icon" class="item-icon" on-click="openItem" draggable="false" src="{{iconUrl}}" />
   
   <div class="item-info overflow-ellipsis">
     <button
@@ -22,11 +20,12 @@
 
     <div class="overflow-ellipsis">
       <span class="item-size">{{size}}</span> &mdash;
-      <span class="item-hostname" title="{{url}}">{{hostname}}</span>
+      <span class="item-hostname" title="{{subUrl}}">{{hostname}}</span>
       <input id="link-{{id}}" class="item-link-input" value="{{url}}" />
     </div>
 
-    <span class="item-datetime">{{dateTime}}</span>
+    <span class="item-datetime">Start date: {{dateTime}} - {{remainingMinutes}} minutes remaining</span>
+    <span class="item-speed">Download speed: {{currentSpeed}} MB/s</span>
 
     <div class="item-options">
       <div class="progress" title="{{percentage}}%">
@@ -70,7 +69,7 @@
     </button>
 
     <button
-      class="btn item-show"
+      class="btn item-show {{folderClass}}"
       title="Open containing folder: {{filePath}}"
       on-click="showItem"
     >

@@ -127,7 +127,8 @@ body {
 }
 
 .item-minutes,
-.item-speed {
+.item-speed,
+.loader {
   display: block;
 }
 
@@ -221,7 +222,8 @@ body {
 }
 
 .state-canceled .progress,
-.state-canceled .cancel-button {
+.state-canceled .cancel-button,
+.state-canceled .item-speed {
   display: none;
 }
 
@@ -237,6 +239,10 @@ body {
 
 .state-paused .progress .loader {
   background-color: #7a7878;
+}
+
+.state-paused .item-speed {
+  display: none;
 }
 
 .state-in_progress .item-options,

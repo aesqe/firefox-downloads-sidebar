@@ -120,12 +120,13 @@ body {
 .item-size,
 .item-hostname,
 .item-datetime,
+.item-minutes,
 .item-speed {
   opacity: 0.75;
   font-size: 11px;
 }
 
-.item-datetime,
+.item-minutes,
 .item-speed {
   display: block;
 }

@@ -528,22 +528,24 @@ function start() {
     },
 
     getCurrentSpeed(item) {
-      const remainingSeconds = this.getRemainingSeconds(item);
-      const remainingMegaBytes = (item.totalBytes - item.bytesReceived) / 1048576;
-      return Math.round(remainingMegaBytes / remainingSeconds).toString();
+      const downloadState = this.calculateDownloadState(item);
+      if (downloadState === PAUSED) {
+        return "0";
+      } else {
+        const remainingSeconds = this.getRemainingSeconds(item);
+        const remainingMegaBytes = (item.totalBytes - item.bytesReceived) / 1048576;
+        const currentSpeed = Math.round(remainingMegaBytes / remainingSeconds);
+        return this.checkMinuteToString(currentSpeed);
+      }
     },
 
     getRemainingMinutesString(item) {
-      const differenceMinutes = this.getRemainingMinutes(item);
-      
-      if (differenceMinutes <= 0){
-        return "0";
-      } else if (differenceMinutes > 0) {
-        return differenceMinutes.toString();
-      } else if (isNaN(differenceMinutes)){
-        return "NaN";
+      const downloadState = this.calculateDownloadState(item);
+      if (downloadState === PAUSED) {
+        return "Paused";
       } else {
-        return "Error";
+        const differenceMinutes = this.getRemainingMinutes(item);
+        return this.checkMinuteToString(differenceMinutes) + " minutes remaining";
       }
     },
 
@@ -560,6 +562,16 @@ function start() {
     getDifferenceInSeconds(startDate, endDate) {
       const differenceSeconds = (endDate.getTime() - startDate.getTime()) / 1000;
       return Math.round(differenceSeconds);
+    },
+
+    checkMinuteToString(int){
+      if (int <= 0){
+        return "<0";
+      } else if (int > 0) {
+        return int.toString();
+      } else {
+        return "Calculating";
+      }
     }
   });
 }

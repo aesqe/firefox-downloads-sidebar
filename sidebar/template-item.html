@@ -24,10 +24,10 @@
       <input id="link-{{id}}" class="item-link-input" value="{{url}}" />
     </div>
 
-    <span class="item-datetime">Start date: {{dateTime}} - {{remainingMinutes}} minutes remaining</span>
-    <span class="item-speed">Download speed: {{currentSpeed}} MB/s</span>
+    <span class="item-datetime">{{dateTime}}</span>
 
     <div class="item-options">
+      <span class="item-speed">{{currentSpeed}} MB/s - {{remainingMinutes}}</span>
       <div class="progress" title="{{percentage}}%">
         <span class="loader" style="width: {{percentage}}%"></span>
       </div>

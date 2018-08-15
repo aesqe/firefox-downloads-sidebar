@@ -271,7 +271,7 @@ function start() {
 
     openItem(event) {
       const item = event.get();
-      browser.downloads.open(item.id);      
+      browser.downloads.open(item.id);
     },
 
     showItem(event) {
@@ -514,39 +514,41 @@ function start() {
       const { COMPLETE } = this.states;
       if (state === COMPLETE) {
         return "folderEnabled";
-      } else {
-        return "folderDisabled";
       }
+      return "folderDisabled";
     },
 
     getLimitedUrl(url) {
       if (url.length < URL_SUBSTRING_LENGTH) {
         return url;
-      } else {
-        return url.substring(0,URL_SUBSTRING_LENGTH) + "...";
       }
+      return url.substring(0,URL_SUBSTRING_LENGTH) + "...";
     },
 
     getCurrentSpeed(item) {
       const downloadState = this.calculateDownloadState(item);
       if (downloadState === PAUSED) {
         return "0";
-      } else {
-        const remainingSeconds = this.getRemainingSeconds(item);
-        const remainingMegaBytes = (item.totalBytes - item.bytesReceived) / 1048576;
-        const currentSpeed = Math.round(remainingMegaBytes / remainingSeconds);
-        return this.checkMinuteToString(currentSpeed);
       }
+      const remainingSeconds = this.getRemainingSeconds(item);
+      const remainingMegaBytes = (item.totalBytes - item.bytesReceived) / 1048576;
+      const currentSpeed = Math.round(remainingMegaBytes / remainingSeconds);
+      return this.checkMinuteToString(currentSpeed);
     },
 
     getRemainingMinutesString(item) {
       const downloadState = this.calculateDownloadState(item);
       if (downloadState === PAUSED) {
         return "Paused";
-      } else {
-        const differenceMinutes = this.getRemainingMinutes(item);
-        return this.checkMinuteToString(differenceMinutes) + " minutes remaining";
       }
+      const differenceMinutes = this.getRemainingMinutes(item);
+      const remainingMinutes = this.checkMinuteToString(differenceMinutes);
+      
+      if (remainingMinutes === "<0"){
+        return "Less than a minute remaining";
+      }
+
+      return remainingMinutes + " minutes remaining";
     },
 
     getRemainingMinutes(item) {
@@ -569,9 +571,9 @@ function start() {
         return "<0";
       } else if (int > 0) {
         return int.toString();
-      } else {
-        return "Calculating";
       }
+
+      return "Calculating";
     }
   });
 }

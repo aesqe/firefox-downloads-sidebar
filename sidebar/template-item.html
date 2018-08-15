@@ -1,8 +1,9 @@
 <div
   id="item-{{id}}"
-  title="Click the icon to open the file directly"
+  title="Double-click to open the file directly"
   class="item state-{{downloadState}}"
   class-selected="selected"
+  on-dblclick="openItem"
   >
   <img id="icon" class="item-icon" on-click="openItem" draggable="false" src="{{iconUrl}}" />
   
@@ -59,14 +60,14 @@
       Copy download link
     </button>
 
-    <button
+    <a
       class="btn item-download-page"
       title="Go To Download Page"
       href="{{referrer}}"
       target="_blank"
     >
       Go To Download Page
-    </button>
+    </a>
 
     <button
       class="btn item-show {{folderClass}}"

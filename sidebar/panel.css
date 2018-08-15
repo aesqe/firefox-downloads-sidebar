@@ -216,7 +216,6 @@ body {
   position: relative;
   height: 6px;
   width: 100%;
-  /*border: 1px solid #a0a0a0;*/
   background-color: #c7c7c7;
   border-radius: 1px;
 }
@@ -279,13 +278,6 @@ body {
 .erase-button:active {
   background-color: rgba(12, 12, 13, 0.2);
 }
-/*
-Doesn't look great
-.change-state-button:focus,
-.cancel-button:focus,
-.erase-button:focus {
-  box-shadow: 0 0 0 1px #0a84ff inset, 0 0 0 1px #0a84ff, 0 0 0 1px rgba(10, 132, 255, 0.3);
-}*/
 
 
 .state-in_progress .change-state-button {

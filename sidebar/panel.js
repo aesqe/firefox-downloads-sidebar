@@ -531,6 +531,10 @@ function start() {
         return "0";
       }
       const remainingSeconds = this.getRemainingSeconds(item);
+      if (remainingSeconds === 0) {
+        return "0";
+      }
+
       const remainingMegaBytes = (item.totalBytes - item.bytesReceived) / 1048576;
       const currentSpeed = Math.round(remainingMegaBytes / remainingSeconds);
       return this.checkMinuteToString(currentSpeed);

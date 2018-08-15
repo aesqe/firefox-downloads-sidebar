@@ -22,6 +22,7 @@ body {
 .toolbar-bottom {
   margin: auto 0 0;
   padding: 8px 0 4px;
+  border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,15 +31,26 @@ body {
 }
 
 .toolbar-bottom button {
-  background: transparent;
-  border: 1px transparent;
-  padding: 4px 8px;
+  background-color: rgba(12, 12, 13, 0.1);
+  height: 32px;
+  color: #0c0c0d;
+  border-radius: 2px;
+  border: none;
+  padding: 0 8px;
   cursor: pointer;
 }
 
 .toolbar-bottom button:hover {
-  background-color: #d7e5f1;
-  border-color: #c0dcf3;
+  background-color: rgba(12, 12, 13, 0.2);
+  border-color: #adafb1;
+}
+
+.toolbar-bottom button:active {
+  background-color: rgba(12, 12, 13, 0.3);
+}
+
+.toolbar-bottom button:focus {
+  box-shadow: 0 0 0 1px #0a84ff inset, 0 0 0 1px #0a84ff, 0 0 0 4px rgba(10, 132, 255, 0.3);
 }
 
 .item-link-input {
@@ -57,12 +69,14 @@ body {
 .item {
   display: flex;
   align-items: center;
-  padding: 4px;
+  margin: -3px;
+  padding: 7px;
   position: relative;
+  border-bottom: 1px solid rgb(175, 175, 175);
 }
 
 .item + .item {
-  margin-top: 16px;
+  margin-top: 3px;
 }
 
 .item-icon {
@@ -72,7 +86,19 @@ body {
   flex-basis: 32px;
   vertical-align: top;
   margin-left: 4px;
+  cursor: pointer;
+  transition: 0.5s ease;
+  /*pointer-events: none;*/
 }
+
+.item-icon:hover{
+  opacity: 0.6;
+}
+
+.grayscale {
+  filter: grayscale(1);
+}
+
 
 .overflow-ellipsis {
   overflow: hidden;
@@ -93,9 +119,17 @@ body {
 
 .item-size,
 .item-hostname,
-.item-datetime {
+.item-datetime,
+.item-minutes,
+.item-speed {
   opacity: 0.75;
   font-size: 11px;
+}
+
+.item-minutes,
+.item-speed,
+.loader {
+  display: block;
 }
 
 .toolbar-item {
@@ -106,15 +140,18 @@ body {
 }
 
 .toolbar-item .btn {
+  background-position: center;
   background-repeat: no-repeat;
   background-color: transparent;
   width: 16px;
   height: 16px;
+  padding: 0 2px;
+  margin: 0px 0px 1px 0px;
   flex-basis: 16px;
   border: none;
   margin-left: auto;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 3px;
   vertical-align: top;
   text-indent: -500px;
   overflow: hidden;
@@ -126,17 +163,34 @@ body {
 }
 
 .toolbar-item .btn:hover {
-  background-color: #f4f4f4;
+  background-color: rgba(12, 12, 13, 0.1);
 }
 
 .toolbar-item .btn:active {
-  background-color: #eeeeee;
+  background-color: rgba(12, 12, 13, 0.2);
 }
 
 .toolbar-item .btn.item-show {
   background-image: url(../icons/folder.svg);
   background-position: center;
-  background-size: 18px;
+  background-size: 15px;
+}
+
+.folderEnabled {
+  opacity: 1;
+}
+
+.folderDisabled {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+}
+
+.folderDisabled:hover {
+  background-color: transparent !important;
+}
+
+.folderDisabled:active {
+  background-color: transparent !important;
 }
 
 .item-copy-link {
@@ -148,25 +202,29 @@ body {
 .item-download-page {
   background-image: url(../icons/external-link.svg);
   background-position: 1px center;
-  background-size: 16px;
+  background-size: 15px;
 }
 
 .item-options {
   display: none;
   width: 100%;
+  padding-right: 20px;
 }
 
 .progress {
+  margin: 1px 0px;
   position: relative;
-  height: 8px;
+  height: 6px;
   width: 100%;
-  border: 1px solid #a0a0a0;
-  background-color: #f0f0f0;
+  background-color: #c7c7c7;
   border-radius: 1px;
 }
 
 .state-canceled .progress,
-.state-canceled .cancel-button {
+.state-canceled .cancel-button,
+.state-canceled .item-speed,
+.state-paused .item-speed,
+.state-complete .item-speed  {
   display: none;
 }
 
@@ -181,7 +239,7 @@ body {
 }
 
 .state-paused .progress .loader {
-  background-color: #6d6d6d;
+  background-color: #7a7878;
 }
 
 .state-in_progress .item-options,
@@ -190,35 +248,45 @@ body {
   display: block;
 }
 
-.selected {
-  background-image: linear-gradient(to top, #d7e9fc, #e3edfd);
-  border-radius: 4px;
-  box-shadow: 0 0 1px 1px #7ca3ce;
-}
-
 .change-state-button,
 .cancel-button,
 .erase-button {
-  width: 16px;
-  height: 16px;
-  padding: 0;
+  width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 1px;
   border: none;
   cursor: pointer;
   display: inline-block;
   text-indent: -200px;
   overflow: hidden;
   background-color: transparent;
-  background-size: 12px;
+  background-size: 13px;
   background-repeat: no-repeat;
   background-position: center;
   background-image: url(../icons/retry.svg);
 }
 
+.change-state-button:hover,
+.cancel-button:hover,
+.erase-button:hover {
+  background-color: rgba(12, 12, 13, 0.1);
+}
+
+.change-state-button:active,
+.cancel-button:active,
+.erase-button:active {
+  background-color: rgba(12, 12, 13, 0.2);
+}
+
+
 .state-in_progress .change-state-button {
+  background-size: 15px;
   background-image: url(../icons/pause.svg);
 }
 
 .state-paused .change-state-button {
+  background-size: 15px;
   background-image: url(../icons/play.svg);
 }
 
@@ -228,10 +296,11 @@ body {
 }
 
 .erase-button {
+  background-size: 14px;
   display: none;
   position: absolute;
-  left: 0px;
-  top: 0px;
+  left: 4px;
+  top: 4px;
 }
 
 .item:hover .erase-button {
@@ -239,5 +308,6 @@ body {
 }
 
 .cancel-button {
+  background-size: 16px;
   margin-left: 8px;
 }

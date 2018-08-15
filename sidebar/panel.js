@@ -4,6 +4,7 @@ Ractive.defaults.allowExpressions = false;
 let app;
 
 const DOWNLOAD_PROGRESS_INTERVAL = 500;
+const URL_SUBSTRING_LENGTH = 70;
 const ACTIVE_DOWNLOADS = "activeDownloads";
 const PAUSED = "paused";
 const FAILED = "failed";
@@ -73,7 +74,6 @@ function start() {
       this.on({
         openItem: this.openItem,
         showItem: this.showItem,
-        selectItem: this.selectItem,
         eraseDownload: this.eraseDownload,
         cancelDownload: this.cancelDownload,
         clearDownloads: this.clearDownloads,
@@ -119,7 +119,7 @@ function start() {
             },
             this.onError
           );
-      }      
+      }
     },
 
     removeFromActiveDownloads(itemId) {
@@ -175,6 +175,12 @@ function start() {
       const stateButtonText = this.getStateButtonText(item.state);
       const percentage = item.bytesReceived / item.totalBytes;
 
+      const folderClass = this.getFolderClass(item.state);
+      const subUrl = this.getLimitedUrl(item.url);
+
+      const remainingMinutes = this.getRemainingMinutesString(item);
+      const currentSpeed = this.getCurrentSpeed(item);
+
       return {
         ...item,
         size,
@@ -184,6 +190,10 @@ function start() {
         dateTime,
         stateButtonText,
         percentage,
+        folderClass,
+        subUrl,
+        remainingMinutes,
+        currentSpeed,
       };
     },
 
@@ -233,11 +243,7 @@ function start() {
     getNumber(num) {
       const trynum = Number(num);
 
-      if (isNaN(trynum)) {
-        return 0;
-      }
-
-      if (trynum < 0) {
+      if (isNaN(trynum) || trynum < 0) {
         return 0;
       }
 
@@ -261,27 +267,6 @@ function start() {
 
     getFilename(path) {
       return path.replace(/\\+/g, "/").split("/").pop();
-    },
-
-    deselectAllItems() {
-      const items = this.get(ITEMS);
-
-      items.forEach((item) => {
-        const itemIndex = this.getItemIndexById(item.id);
-        const keypath = `items.${itemIndex}.selected`;
-
-        if (this.get(keypath)) {
-          this.set(keypath, false);
-        }
-      });
-    },
-
-    selectItem(event) {
-      const item = event.get();
-      const itemIndex = this.getItemIndexById(item.id);
-
-      this.deselectAllItems();
-      this.set(`items.${itemIndex}.selected`, true);
     },
 
     openItem(event) {
@@ -351,6 +336,10 @@ function start() {
           () => this.removeFromActiveDownloads(item.id),
           this.onError
         );
+
+        //doesn't actually add it to active downloads, but it fixes the cancel while paused bug
+        this.addToActiveDownloads(item.id);
+        this.updateDownloadItem(item);
     },
 
     eraseDownload(event) {
@@ -447,7 +436,7 @@ function start() {
           .then(this.updateDownloadItem);
       }
 
-      const { IN_PROGRESS } = this.states;
+      const { IN_PROGRESS, COMPLETE } = this.states;
 
       const itemIndex = this.getItemIndexById(item.id);
       const keypath = `items.${itemIndex}`;
@@ -459,7 +448,10 @@ function start() {
       const downloadInProgress = (
         downloadState === PAUSED || downloadState === IN_PROGRESS
       );
-
+      const folderClass = this.getFolderClass(downloadState);
+      const remainingMinutes = this.getRemainingMinutesString(item);
+      const currentSpeed = this.getCurrentSpeed(item);
+      
       let size = oldItem.size;
       let percentage = oldItem.percentage;
 
@@ -469,7 +461,7 @@ function start() {
 
         const totalBytes = this.getNumber(item.totalBytes);
         const totalSize = this.getFileSizeString(item.totalBytes);
-
+        
         if (downloadInProgress && totalBytes) {
           size = `${size} of ${totalSize}`;
         }
@@ -480,6 +472,9 @@ function start() {
       this.set(`${keypath}.downloadState`, downloadState);
       this.set(`${keypath}.percentage`, percentage);
       this.set(`${keypath}.size`, size);
+      this.set(`${keypath}.folderClass`, folderClass);
+      this.set(`${keypath}.remainingMinutes`, remainingMinutes);
+      this.set(`${keypath}.currentSpeed`, currentSpeed);
 
       if (downloadState !== IN_PROGRESS) {
         this.removeFromActiveDownloads(item.id);
@@ -514,6 +509,76 @@ function start() {
 
       document.execCommand("copy");
     },
+
+    getFolderClass(state) {
+      const { COMPLETE } = this.states;
+      if (state === COMPLETE) {
+        return "folderEnabled";
+      }
+      return "folderDisabled";
+    },
+
+    getLimitedUrl(url) {
+      if (url.length < URL_SUBSTRING_LENGTH) {
+        return url;
+      }
+      return url.substring(0,URL_SUBSTRING_LENGTH) + "...";
+    },
+
+    getCurrentSpeed(item) {
+      const downloadState = this.calculateDownloadState(item);
+      if (downloadState === PAUSED) {
+        return "0";
+      }
+      const remainingSeconds = this.getRemainingSeconds(item);
+      if (remainingSeconds === 0) {
+        return "0";
+      }
+
+      const remainingMegaBytes = (item.totalBytes - item.bytesReceived) / 1048576;
+      const currentSpeed = Math.round(remainingMegaBytes / remainingSeconds);
+      return this.checkMinuteToString(currentSpeed);
+    },
+
+    getRemainingMinutesString(item) {
+      const downloadState = this.calculateDownloadState(item);
+      if (downloadState === PAUSED) {
+        return "Paused";
+      }
+      const differenceMinutes = this.getRemainingMinutes(item);
+      const remainingMinutes = this.checkMinuteToString(differenceMinutes);
+      
+      if (remainingMinutes === "<0"){
+        return "Less than a minute remaining";
+      }
+
+      return remainingMinutes + " minutes remaining";
+    },
+
+    getRemainingMinutes(item) {
+      return Math.round(this.getRemainingSeconds(item) / 60);
+    },
+
+    getRemainingSeconds(item) {
+      const endDate = new Date(item.estimatedEndTime);
+      const currentDate = new Date();
+      return this.getDifferenceInSeconds(currentDate,endDate);
+    },
+
+    getDifferenceInSeconds(startDate, endDate) {
+      const differenceSeconds = (endDate.getTime() - startDate.getTime()) / 1000;
+      return Math.round(differenceSeconds);
+    },
+
+    checkMinuteToString(int){
+      if (int <= 0){
+        return "<0";
+      } else if (int > 0) {
+        return int.toString();
+      }
+
+      return "Calculating";
+    }
   });
 }
 

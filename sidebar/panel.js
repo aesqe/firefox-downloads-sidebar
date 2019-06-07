@@ -399,7 +399,6 @@ function start() {
       const errored = !!this.interrupts[item.error];
       const resumable = item.paused && item.canResume;
       const canceled = (item.error === this.interrupts.USER_CANCELED);
-      const in_progress = (item.state === IN_PROGRESS);
       const complete = (item.state === COMPLETE);
 
       if (errored) {
@@ -535,8 +534,9 @@ function start() {
     },
 
     getCurrentSpeed(item) {
+      const { PAUSED, COMPLETE } = this.states;
       const downloadState = this.calculateDownloadState(item);
-      if (downloadState === PAUSED) {
+      if (downloadState === PAUSED || downloadState === COMPLETE) {
         return "0";
       }
 
@@ -567,9 +567,12 @@ function start() {
     },
 
     getRemainingTimeString(item) {
+      const { PAUSED, COMPLETE } = this.states;
       const downloadState = this.calculateDownloadState(item);
       if (downloadState === PAUSED) {
         return "Paused";
+      } else if (downloadState === COMPLETE) {
+        return "Completed";
       }
 
       const remainingSeconds = this.getRemainingSeconds(item);

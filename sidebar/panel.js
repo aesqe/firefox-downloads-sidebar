@@ -482,6 +482,14 @@ function start() {
       this.set(`${keypath}.folderClass`, folderClass);
       this.set(`${keypath}.remainingTime`, remainingTime);
       this.set(`${keypath}.currentSpeed`, currentSpeed);
+      
+      if (downloadInProgress) {
+        const date = new Date(item.startTime);
+        const localeDate = date.toLocaleDateString();
+        const localeTime = date.toLocaleTimeString();
+        const dateTime = `${localeDate} ${localeTime}`;
+        this.set(`${keypath}.dateTime`, dateTime);
+      }
 
       if (downloadState !== IN_PROGRESS) {
         this.removeFromActiveDownloads(item.id);

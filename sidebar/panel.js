@@ -366,7 +366,6 @@ function start() {
 
     addItem(data) {
       const item = this.prepareItem(data);
-      const fileName = this.getFilename(item.filename);
 
       this.unshift(ITEMS, item);
 

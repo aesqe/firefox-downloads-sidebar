@@ -177,10 +177,7 @@ function start() {
       const parsedUrl = new URL(item.url);
       const hostname = parsedUrl.hostname || parsedUrl.href;
       const size = this.getFileSizeString(item.bytesReceived);
-      const date = new Date(item.startTime);
-      const localeDate = date.toLocaleDateString();
-      const localeTime = date.toLocaleTimeString();
-      const dateTime = `${localeDate} ${localeTime}`;
+      const dateTime = this.getDateTime(item);
       const stateButtonText = this.getStateButtonText(item.state);
       const percentage = item.bytesReceived / item.totalBytes;
 
@@ -204,6 +201,17 @@ function start() {
         remainingTime,
         currentSpeed,
       };
+    },
+
+    getDateTime(item) {
+      const date = new Date(item.startTime);
+      if (date.getTime() === 0) {
+        return "Unknown"; //epoch case
+      }
+
+      const localeDate = date.toLocaleDateString();
+      const localeTime = date.toLocaleTimeString();
+      return `${localeDate} ${localeTime}`;
     },
 
     prepareItems(items) {
@@ -484,10 +492,7 @@ function start() {
       this.set(`${keypath}.currentSpeed`, currentSpeed);
       
       if (downloadInProgress) {
-        const date = new Date(item.startTime);
-        const localeDate = date.toLocaleDateString();
-        const localeTime = date.toLocaleTimeString();
-        const dateTime = `${localeDate} ${localeTime}`;
+        const dateTime = this.getDateTime(item);
         this.set(`${keypath}.dateTime`, dateTime);
       }
 

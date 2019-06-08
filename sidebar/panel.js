@@ -601,14 +601,14 @@ function start() {
 
       if (remainingSeconds > HOUR_INT) {
         timeUnit = HOUR_INT;
-        suffix = " hours remaining";
+        suffix = "h remaining";
       } else if (remainingSeconds > MINUTE_INT) {
         timeUnit = MINUTE_INT;
-        suffix = " minutes remaining";
+        suffix = "m remaining";
       } else
       {
         timeUnit = SECOND_INT;
-        suffix = " seconds remaining";
+        suffix = "s remaining";
       }
       const remaining = this.divideAndRound(remainingSeconds, timeUnit);
       return `${prefixSeparator}${remaining}${suffix}`;

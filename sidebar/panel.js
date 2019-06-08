@@ -22,6 +22,15 @@ const measures = [
   "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
 ];
 
+const SECOND_INT = 1;
+const MINUTE_INT = SECOND_INT * 60;
+const HOUR_INT   = MINUTE_INT * 60;
+const DAY_INT    = HOUR_INT * 60;
+
+const SPEED_KILOBYTE = 1024;
+const SPEED_MEGABYTE = SPEED_KILOBYTE * 1024;
+const SPEED_GIGABYTE = SPEED_MEGABYTE * 1024;
+
 const autobindMethods = [
   "addItem",
   "checkActiveDownloads",
@@ -168,17 +177,14 @@ function start() {
       const parsedUrl = new URL(item.url);
       const hostname = parsedUrl.hostname || parsedUrl.href;
       const size = this.getFileSizeString(item.bytesReceived);
-      const date = new Date(item.startTime);
-      const localeDate = date.toLocaleDateString();
-      const localeTime = date.toLocaleTimeString();
-      const dateTime = `${localeDate} ${localeTime}`;
+      const dateTime = this.getDateTime(item);
       const stateButtonText = this.getStateButtonText(item.state);
       const percentage = item.bytesReceived / item.totalBytes;
 
       const folderClass = this.getFolderClass(item.state);
       const subUrl = this.getLimitedUrl(item.url);
 
-      const remainingMinutes = this.getRemainingMinutesString(item);
+      const remainingTime = this.getRemainingTimeString(item);
       const currentSpeed = this.getCurrentSpeed(item);
 
       return {
@@ -192,9 +198,20 @@ function start() {
         percentage,
         folderClass,
         subUrl,
-        remainingMinutes,
+        remainingTime,
         currentSpeed,
       };
+    },
+
+    getDateTime(item) {
+      const date = new Date(item.startTime);
+      if (date.getTime() === 0) {
+        return "Unknown"; //epoch case
+      }
+
+      const localeDate = date.toLocaleDateString();
+      const localeTime = date.toLocaleTimeString();
+      return `${localeDate} ${localeTime}`;
     },
 
     prepareItems(items) {
@@ -357,7 +374,6 @@ function start() {
 
     addItem(data) {
       const item = this.prepareItem(data);
-      const fileName = this.getFilename(item.filename);
 
       this.unshift(ITEMS, item);
 
@@ -390,7 +406,6 @@ function start() {
       const errored = !!this.interrupts[item.error];
       const resumable = item.paused && item.canResume;
       const canceled = (item.error === this.interrupts.USER_CANCELED);
-      const in_progress = (item.state === IN_PROGRESS);
       const complete = (item.state === COMPLETE);
 
       if (errored) {
@@ -449,7 +464,7 @@ function start() {
         downloadState === PAUSED || downloadState === IN_PROGRESS
       );
       const folderClass = this.getFolderClass(downloadState);
-      const remainingMinutes = this.getRemainingMinutesString(item);
+      const remainingTime = this.getRemainingTimeString(item);
       const currentSpeed = this.getCurrentSpeed(item);
       
       let size = oldItem.size;
@@ -473,8 +488,13 @@ function start() {
       this.set(`${keypath}.percentage`, percentage);
       this.set(`${keypath}.size`, size);
       this.set(`${keypath}.folderClass`, folderClass);
-      this.set(`${keypath}.remainingMinutes`, remainingMinutes);
+      this.set(`${keypath}.remainingTime`, remainingTime);
       this.set(`${keypath}.currentSpeed`, currentSpeed);
+      
+      if (downloadInProgress) {
+        const dateTime = this.getDateTime(item);
+        this.set(`${keypath}.dateTime`, dateTime);
+      }
 
       if (downloadState !== IN_PROGRESS) {
         this.removeFromActiveDownloads(item.id);
@@ -526,37 +546,76 @@ function start() {
     },
 
     getCurrentSpeed(item) {
+      const { PAUSED, COMPLETE } = this.states;
       const downloadState = this.calculateDownloadState(item);
-      if (downloadState === PAUSED) {
-        return "0";
-      }
-      const remainingSeconds = this.getRemainingSeconds(item);
-      if (remainingSeconds === 0) {
+      if (downloadState === PAUSED || downloadState === COMPLETE) {
         return "0";
       }
 
-      const remainingMegaBytes = (item.totalBytes - item.bytesReceived) / 1048576;
-      const currentSpeed = Math.round(remainingMegaBytes / remainingSeconds);
-      return this.checkMinuteToString(currentSpeed);
+      const remainingSeconds = this.getRemainingSeconds(item);
+
+      if (isNaN(remainingSeconds)){
+        return "Calculating"
+      } else if (remainingSeconds === 0) {
+        return "Finishing";
+      }
+
+      const remainingBytes = item.totalBytes - item.bytesReceived;
+      const currentSpeed = Math.round(remainingBytes / remainingSeconds);
+
+      if (currentSpeed > SPEED_GIGABYTE) {
+        return this.divideAndRound(currentSpeed, SPEED_GIGABYTE) + " GB/s";
+      } else if (currentSpeed > SPEED_MEGABYTE) {
+        return this.divideAndRound(currentSpeed, SPEED_MEGABYTE) + " MB/s";
+      }
+
+      const kiloSpeed = this.divideAndRound(currentSpeed, SPEED_KILOBYTE);
+
+      if (kiloSpeed <= 0) {
+        return "< 1 KB/s";
+      }
+
+      return kiloSpeed + " KB/s";
     },
 
-    getRemainingMinutesString(item) {
+    getRemainingTimeString(item) {
+      const { PAUSED, COMPLETE } = this.states;
       const downloadState = this.calculateDownloadState(item);
       if (downloadState === PAUSED) {
         return "Paused";
-      }
-      const differenceMinutes = this.getRemainingMinutes(item);
-      const remainingMinutes = this.checkMinuteToString(differenceMinutes);
-      
-      if (remainingMinutes === "<0"){
-        return "Less than a minute remaining";
+      } else if (downloadState === COMPLETE) {
+        return "Completed";
       }
 
-      return remainingMinutes + " minutes remaining";
+      const remainingSeconds = this.getRemainingSeconds(item);
+
+      if (isNaN(remainingSeconds) || remainingSeconds <= SECOND_INT) {
+        return "";
+      } else if (remainingSeconds > DAY_INT) {
+        return "Over a day remaining";
+      }
+
+      const prefixSeparator = "- ";
+      let timeUnit = 0;
+      let suffix = '';
+
+      if (remainingSeconds > HOUR_INT) {
+        timeUnit = HOUR_INT;
+        suffix = "h remaining";
+      } else if (remainingSeconds > MINUTE_INT) {
+        timeUnit = MINUTE_INT;
+        suffix = "m remaining";
+      } else
+      {
+        timeUnit = SECOND_INT;
+        suffix = "s remaining";
+      }
+      const remaining = this.divideAndRound(remainingSeconds, timeUnit);
+      return `${prefixSeparator}${remaining}${suffix}`;
     },
 
-    getRemainingMinutes(item) {
-      return Math.round(this.getRemainingSeconds(item) / 60);
+    divideAndRound(unit, divide) {
+      return Math.round(unit / divide);
     },
 
     getRemainingSeconds(item) {
@@ -569,16 +628,6 @@ function start() {
       const differenceSeconds = (endDate.getTime() - startDate.getTime()) / 1000;
       return Math.round(differenceSeconds);
     },
-
-    checkMinuteToString(int){
-      if (int <= 0){
-        return "<0";
-      } else if (int > 0) {
-        return int.toString();
-      }
-
-      return "Calculating";
-    }
   });
 }
 

@@ -2,7 +2,7 @@
 
 This extension will display a list of your latest downloads in the Firefox sidebar.
 
-The latest version is **0.6**
+The latest version is **1.0**
 
 ## How do I use this?
 
@@ -39,6 +39,7 @@ There is also a browser toolbar button which opens the Downloads sidebar.
   * approximate time remaining for a download
   * updated icons
   * UI adjustments so the extension better fits with the Firefox design guidelines
+  * variable speed and time indicators
   * various fixes
 
 ### Requested features

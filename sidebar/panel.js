@@ -588,20 +588,30 @@ function start() {
       }
 
       const remainingSeconds = this.getRemainingSeconds(item);
-      const prefixSeparator = "- ";
 
-      //this is quite ad-hoc, but it is the best possible solution
-      if (remainingSeconds > DAY_INT) {
+      if (isNaN(remainingSeconds) || remainingSeconds <= SECOND_INT) {
+        return "";
+      } else if (remainingSeconds > DAY_INT) {
         return "Over a day remaining";
-      } else if (remainingSeconds > HOUR_INT) {
-        return prefixSeparator + this.divideAndRound(remainingSeconds, HOUR_INT) + " hours remaining";
-      } else if (remainingSeconds > MINUTE_INT) {
-        return prefixSeparator + this.divideAndRound(remainingSeconds, MINUTE_INT) + " minutes remaining";
-      } else if (remainingSeconds > SECOND_INT) {
-        return prefixSeparator + this.divideAndRound(remainingSeconds, SECOND_INT) + " seconds remaining";
       }
 
-      return "";
+      const prefixSeparator = "- ";
+      let timeUnit = 0;
+      let suffix = '';
+
+      if (remainingSeconds > HOUR_INT) {
+        timeUnit = HOUR_INT;
+        suffix = " hours remaining";
+      } else if (remainingSeconds > MINUTE_INT) {
+        timeUnit = MINUTE_INT;
+        suffix = " minutes remaining";
+      } else
+      {
+        timeUnit = SECOND_INT;
+        suffix = " seconds remaining";
+      }
+      const remaining = this.divideAndRound(remainingSeconds, timeUnit);
+      return `${prefixSeparator}${remaining}${suffix}`;
     },
 
     divideAndRound(unit, divide) {

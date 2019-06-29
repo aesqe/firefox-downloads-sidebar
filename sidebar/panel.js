@@ -602,14 +602,14 @@ function start() {
       }
 
       const remainingSeconds = this.getRemainingSeconds(item);
+      const prefixSeparator = "- ";
 
       if (isNaN(remainingSeconds) || remainingSeconds <= SECOND_INT) {
         return "";
       } else if (remainingSeconds > DAY_INT) {
-        return "Over a day remaining";
+        return `${prefixSeparator} Over a day remaining`;
       }
 
-      const prefixSeparator = "- ";
       let timeUnit = 0;
       let suffix = '';
 

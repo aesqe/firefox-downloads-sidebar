@@ -531,21 +531,12 @@ function start() {
     },
 
     getFolderClass(state) {
-      return "folderEnabled";
       /*
-      In the past we had this code checking the state
-      of the download. It looks like the application is better
-      if we always report a folderEnabled state.
-
-      This code is here in case this behaviour wants to be
-      changed in the future.
-      
-      const { COMPLETE } = this.states;
-      if (state === COMPLETE) {
-        return "folderEnabled";
-      }
-      return "folderDisabled";
+      In the past we had this function check the state
+      of the download and apply different styles.
+      The possible styles are folderEnabled and folderDisabled.
       */
+      return "folderEnabled";
     },
 
     getLimitedUrl(url) {

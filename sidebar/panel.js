@@ -531,11 +531,21 @@ function start() {
     },
 
     getFolderClass(state) {
+      return "folderEnabled";
+      /*
+      In the past we had this code checking the state
+      of the download. It looks like the application is better
+      if we always report a folderEnabled state.
+
+      This code is here in case this behaviour wants to be
+      changed in the future.
+      
       const { COMPLETE } = this.states;
       if (state === COMPLETE) {
         return "folderEnabled";
       }
       return "folderDisabled";
+      */
     },
 
     getLimitedUrl(url) {
@@ -546,10 +556,14 @@ function start() {
     },
 
     getCurrentSpeed(item) {
-      const { PAUSED, COMPLETE } = this.states;
+      const { PAUSED, COMPLETE, FAILED } = this.states;
       const downloadState = this.calculateDownloadState(item);
-      if (downloadState === PAUSED || downloadState === COMPLETE) {
-        return "0";
+      if (downloadState === PAUSED) {
+        return "Paused";
+      } else if (downloadState === COMPLETE) {
+        return "Completed";
+      } else if (downloadState === FAILED) {
+        return "Failed";
       }
 
       const remainingSeconds = this.getRemainingSeconds(item);
@@ -579,12 +593,12 @@ function start() {
     },
 
     getRemainingTimeString(item) {
-      const { PAUSED, COMPLETE } = this.states;
+      const { PAUSED, COMPLETE, FAILED } = this.states;
       const downloadState = this.calculateDownloadState(item);
-      if (downloadState === PAUSED) {
-        return "Paused";
-      } else if (downloadState === COMPLETE) {
-        return "Completed";
+      if (downloadState === PAUSED   ||
+          downloadState === COMPLETE ||
+          downloadState === FAILED) {
+        return "";
       }
 
       const remainingSeconds = this.getRemainingSeconds(item);

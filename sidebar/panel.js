@@ -531,11 +531,12 @@ function start() {
     },
 
     getFolderClass(state) {
-      const { COMPLETE } = this.states;
-      if (state === COMPLETE) {
-        return "folderEnabled";
-      }
-      return "folderDisabled";
+      /*
+      In the past we had this function check the state
+      of the download and apply different styles.
+      The possible styles are folderEnabled and folderDisabled.
+      */
+      return "folderEnabled";
     },
 
     getLimitedUrl(url) {
@@ -546,10 +547,14 @@ function start() {
     },
 
     getCurrentSpeed(item) {
-      const { PAUSED, COMPLETE } = this.states;
+      const { PAUSED, COMPLETE, FAILED } = this.states;
       const downloadState = this.calculateDownloadState(item);
-      if (downloadState === PAUSED || downloadState === COMPLETE) {
-        return "0";
+      if (downloadState === PAUSED) {
+        return "Paused";
+      } else if (downloadState === COMPLETE) {
+        return "Completed";
+      } else if (downloadState === FAILED) {
+        return "Failed";
       }
 
       const remainingSeconds = this.getRemainingSeconds(item);
@@ -579,23 +584,23 @@ function start() {
     },
 
     getRemainingTimeString(item) {
-      const { PAUSED, COMPLETE } = this.states;
+      const { PAUSED, COMPLETE, FAILED } = this.states;
       const downloadState = this.calculateDownloadState(item);
-      if (downloadState === PAUSED) {
-        return "Paused";
-      } else if (downloadState === COMPLETE) {
-        return "Completed";
+      if (downloadState === PAUSED   ||
+          downloadState === COMPLETE ||
+          downloadState === FAILED) {
+        return "";
       }
 
       const remainingSeconds = this.getRemainingSeconds(item);
+      const prefixSeparator = "- ";
 
       if (isNaN(remainingSeconds) || remainingSeconds <= SECOND_INT) {
         return "";
       } else if (remainingSeconds > DAY_INT) {
-        return "Over a day remaining";
+        return `${prefixSeparator} Over a day remaining`;
       }
 
-      const prefixSeparator = "- ";
       let timeUnit = 0;
       let suffix = '';
 
